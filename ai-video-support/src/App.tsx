@@ -1,8 +1,10 @@
 import { Button } from "./components/ui/button"
-import { Github, FileVideo, Upload } from "lucide-react"
+import { Github, FileVideo, Upload, Wand2 } from "lucide-react"
 import { Separator } from "./components/ui/separator"
 import { Textarea } from "./components/ui/textarea"
 import { Label } from "./components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./components/ui/select"
+import { Slider } from "./components/ui/slider"
 
 function App() {
 
@@ -37,14 +39,66 @@ function App() {
 
             <Separator />
 
-            <div className="space-y-1">
+            <div className="space-y-2">
               <Label htmlFor="transcriptionPrompt"> Transcription Prompt</Label>
-              <Textarea id="transcriptionPrompt" className="min-h-20 leading-relaxed" placeholder="Include key words mentioned in the video separated by commas"/>
+              <Textarea id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
             </div>
 
             <Button type="submit" className="w-full">
               Upload the Video 
               <Upload className="w-4 h-4 ml-2"/>
+            </Button>
+          </form>
+
+          <Separator />
+
+          <form className="space-y-6">
+          <div className="space-y-2">
+              <Label>Model</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a prompt..."/>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="title">
+                    Youtube Title
+                  </SelectItem>
+                  <SelectItem value="description">
+                    Youtube Description
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-muted-foreground block text-xs italic">You will be able to change this option soon.</span>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Model</Label>
+              <Select disabled defaultValue="gpt3.5">
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gpt3.5">
+                    GPT 3.5-turbo 16k
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-muted-foreground block text-xs italic">You will be able to change this option soon.</span>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-4">
+              <Label>Temperature</Label>
+              <Slider min={0} max={1} step={0.1}/>
+              <span className="text-muted-foreground block text-xs italic leading-relaxed">Higher value may leave the result more creative/errors.</span>
+            </div>
+
+            <Separator />
+
+            <Button type="submit" className="w-full">
+              Execute
+              <Wand2 className="w-4 h-4 ml-2" />
             </Button>
           </form>
         </aside>

@@ -1,7 +1,8 @@
 import { Button } from "./components/ui/button"
-import { Github } from "lucide-react"
+import { Github, FileVideo, Upload } from "lucide-react"
 import { Separator } from "./components/ui/separator"
 import { Textarea } from "./components/ui/textarea"
+import { Label } from "./components/ui/label"
 
 function App() {
 
@@ -26,7 +27,27 @@ function App() {
 
           <p className="text-sm text-muted-foreground">Remember: You can use the variable <code className="text-violet-400">{'{transcription}'}</code> in your prompt to add the content of the transcription for the video selected.</p>
         </div>
-        <aside className="w-80"></aside>
+        <aside className="w-80 space-y-6">
+          <form className="space-y-6">
+            <label htmlFor="video" className="border flex rounded-md aspect-video cursor-pointer border-dashed text-sm flex-col gap-2 items-center justify-center text-muted-foreground hover:bg-primary/5"> 
+              <FileVideo className="w-4 h-4"/>
+              Pick a Video
+            </label>
+            <input type="file" id="video" accept="video/mp4" className="sr-only"/>
+
+            <Separator />
+
+            <div className="space-y-1">
+              <Label htmlFor="transcriptionPrompt"> Transcription Prompt</Label>
+              <Textarea id="transcriptionPrompt" className="min-h-20 leading-relaxed" placeholder="Include key words mentioned in the video separated by commas"/>
+            </div>
+
+            <Button type="submit" className="w-full">
+              Upload the Video 
+              <Upload className="w-4 h-4 ml-2"/>
+            </Button>
+          </form>
+        </aside>
       </main>
     </div>
   )

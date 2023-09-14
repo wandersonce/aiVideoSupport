@@ -1,5 +1,5 @@
 import { FileVideo, Upload, Wand2 } from 'lucide-react'
-import { ChangeEvent, useMemo, useState } from 'react'
+import { ChangeEvent, FormEvent, useMemo, useRef, useState } from 'react'
 import { Separator } from './ui/separator'
 import { Label } from './ui/label'
 import { Textarea } from './ui/textarea'
@@ -9,6 +9,7 @@ import { Slider } from './ui/slider'
 
 function VideoInputForm() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const promptInputRef = useRef<HTMLTextAreaElement>(null)
 
   function handleFileSelected(event:ChangeEvent<HTMLInputElement>){
     const {files} = event.currentTarget;
@@ -20,6 +21,11 @@ function VideoInputForm() {
     const selectedFile = files[0];
 
     setVideoFile(selectedFile)
+  }
+
+  function handleUploadVideo(event : FormEvent<HTMLFormElement>){
+    event.preventDefault();
+
   }
 
   const previewURL = useMemo(() => {
@@ -50,7 +56,7 @@ function VideoInputForm() {
 
             <div className="space-y-2">
               <Label htmlFor="transcriptionPrompt"> Transcription Prompt</Label>
-              <Textarea id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
+              <Textarea ref={promptInputRef} id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
             </div>
 
             <Button type="submit" className="w-full">

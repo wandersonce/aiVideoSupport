@@ -10,6 +10,7 @@ import { getFFmpeg } from '@/lib/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
 import { api } from '@/lib/axios'
 import PromptSelect from './prompt-select'
+import { useCompletion } from 'ai/react'
 
 type Status = 'waiting' | 'converting' | 'uploading' | 'generating' | 'success'
 
@@ -27,10 +28,18 @@ function VideoInputForm() {
   const [videoId,setVideoId] = useState(null);
   const promptInputRef = useRef<HTMLTextAreaElement>(null);
 
-  function handlePromptSelected(template: string){
-    console.log(template)
-  }
 
+  //Pass the completion,/handleInput to the text areas in app
+  const {input, setInput, handleInputChange, handleSubmit, completion, isLoading} = useCompletion({
+    api:'http://localhost:3333/ai/complete',
+    body: {
+      videoId,
+      temparature,
+    },
+    headers:{
+      'Content-type': 'application/json'
+    }
+  })
 
   function handleFileSelected(event:ChangeEvent<HTMLInputElement>){
     const {files} = event.currentTarget;
@@ -162,10 +171,10 @@ function VideoInputForm() {
 
           <Separator />
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
               <Label>Model</Label>
-              <PromptSelect onPromptSelected={handlePromptSelected} />
+              <PromptSelect onPromptSelected={setInput} />
               <span className="text-muted-foreground block text-xs italic">You will be able to change this option soon.</span>
             </div>
 

@@ -9,8 +9,16 @@ import { Slider } from './ui/slider'
 import { getFFmpeg } from '@/lib/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
 import { api } from '@/lib/axios'
+import PromptSelect from './prompt-select'
 
 type Status = 'waiting' | 'converting' | 'uploading' | 'generating' | 'success'
+
+const statusMessages = {
+  converting: 'Converting...',
+  generating: 'Transcribing...',
+  uploading: 'Loading...',
+  success: 'Success'
+}
 
 function VideoInputForm() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -90,11 +98,13 @@ function VideoInputForm() {
 
     const response = await api.post('/videos', data)
 
-    const videoId = response.data.video.id;
+    const videoId = response.data.video.id
 
     setStatus('generating')
 
-    await api.post(`/videos/${videoId}/transcription`, {prompt})
+    await api.post(`/videos/${videoId}/transcription`, {
+      prompt,
+    })
 
     console.log('End')
     setStatus('success')
@@ -131,9 +141,13 @@ function VideoInputForm() {
               <Textarea disabled={status !== 'waiting'} ref={promptInputRef} id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
             </div>
 
-            <Button disabled={status !== 'waiting'} type="submit" className="w-full">
-              Upload the Video 
-              <Upload className="w-4 h-4 ml-2"/>
+            <Button data-success={status === 'success'} disabled={status !== 'waiting'} type="submit" className="w-full data-[success=true]:bg-emerald-400">
+                {status === 'waiting' ? (
+                    <>
+                      Execute
+                      <Upload className="w-4 h-4 ml-2" />
+                    </>
+                  ) : statusMessages[status]}
             </Button>
           </form>
 
@@ -142,19 +156,7 @@ function VideoInputForm() {
           <form className="space-y-6">
           <div className="space-y-2">
               <Label>Model</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a prompt..."/>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="title">
-                    Youtube Title
-                  </SelectItem>
-                  <SelectItem value="description">
-                    Youtube Description
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+              <PromptSelect />
               <span className="text-muted-foreground block text-xs italic">You will be able to change this option soon.</span>
             </div>
 

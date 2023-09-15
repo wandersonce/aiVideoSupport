@@ -8,9 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Slider } from './ui/slider'
 import { getFFmpeg } from '@/lib/ffmpeg'
 import { fetchFile } from '@ffmpeg/util'
+import { api } from '@/lib/axios'
+
+type Status = 'waiting' | 'converting' | 'uploading' | 'generating' | 'success'
 
 function VideoInputForm() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<Status>('waiting');
   const promptInputRef = useRef<HTMLTextAreaElement>(null)
 
   function handleFileSelected(event:ChangeEvent<HTMLInputElement>){
@@ -73,10 +77,27 @@ function VideoInputForm() {
       return;
     }
 
+    setStatus('converting')
+
     //Convert video to audio
     const audioFile = await convertVideoToAudio(videoFile)
 
-    console.log(audioFile, prompt)
+    const data = new FormData()
+
+    setStatus('uploading')
+
+    data.append('file', audioFile)
+
+    const response = await api.post('/videos', data)
+
+    const videoId = response.data.video.id;
+
+    setStatus('generating')
+
+    await api.post(`/videos/${videoId}/transcription`, {prompt})
+
+    console.log('End')
+    setStatus('success')
   }
 
   const previewURL = useMemo(() => {
@@ -107,10 +128,10 @@ function VideoInputForm() {
 
             <div className="space-y-2">
               <Label htmlFor="transcriptionPrompt"> Transcription Prompt</Label>
-              <Textarea ref={promptInputRef} id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
+              <Textarea disabled={status !== 'waiting'} ref={promptInputRef} id="transcriptionPrompt" className="h-20 leading-relaxed resize-none" placeholder="Include key words mentioned in the video separated by commas"/>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button disabled={status !== 'waiting'} type="submit" className="w-full">
               Upload the Video 
               <Upload className="w-4 h-4 ml-2"/>
             </Button>

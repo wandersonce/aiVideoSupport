@@ -5,7 +5,7 @@ import { Textarea } from "./components/ui/textarea"
 import VideoInputForm from "./components/video-input-form"
 
 function App() {
-
+  
   return (
     <div className="min-h-screen flex flex-col">
       <div className="px-6 py-3 flex items-center justify-between border-b">
@@ -28,7 +28,7 @@ function App() {
           <p className="text-sm text-muted-foreground">Remember: You can use the variable <code className="text-violet-400">{'{transcription}'}</code> in your prompt to add the content of the transcription for the video selected.</p>
         </div>
         <aside className="w-80 space-y-6">
-          <VideoInputForm />
+          <VideoInputForm  />
         </aside>
       </main>
     </div>

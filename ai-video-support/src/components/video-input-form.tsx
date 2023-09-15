@@ -23,7 +23,14 @@ const statusMessages = {
 function VideoInputForm() {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>('waiting');
-  const promptInputRef = useRef<HTMLTextAreaElement>(null)
+  const [temparature, setTemperature] = useState(0.5);
+  const [videoId,setVideoId] = useState(null);
+  const promptInputRef = useRef<HTMLTextAreaElement>(null);
+
+  function handlePromptSelected(template: string){
+    console.log(template)
+  }
+
 
   function handleFileSelected(event:ChangeEvent<HTMLInputElement>){
     const {files} = event.currentTarget;
@@ -108,6 +115,8 @@ function VideoInputForm() {
 
     console.log('End')
     setStatus('success')
+
+    setVideoId(videoId);
   }
 
   const previewURL = useMemo(() => {
@@ -156,7 +165,7 @@ function VideoInputForm() {
           <form className="space-y-6">
           <div className="space-y-2">
               <Label>Model</Label>
-              <PromptSelect />
+              <PromptSelect onPromptSelected={handlePromptSelected} />
               <span className="text-muted-foreground block text-xs italic">You will be able to change this option soon.</span>
             </div>
 
@@ -179,7 +188,7 @@ function VideoInputForm() {
 
             <div className="space-y-4">
               <Label>Temperature</Label>
-              <Slider min={0} max={1} step={0.1}/>
+              <Slider min={0} max={1} step={0.1} value={[temparature]} onValueChange={value => setTemperature(value[0])}/>
               <span className="text-muted-foreground block text-xs italic leading-relaxed">Higher value may leave the result more creative/errors.</span>
             </div>
 
